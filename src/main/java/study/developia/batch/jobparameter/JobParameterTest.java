@@ -1,4 +1,4 @@
-package study.developia.batch.jobinstance;
+package study.developia.batch.jobparameter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -9,9 +9,11 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @RequiredArgsConstructor
 @Component
-public class JobRunner implements ApplicationRunner {
+public class JobParameterTest implements ApplicationRunner {
 
     private final JobLauncher jobLauncher;
     private final Job job;
@@ -19,7 +21,10 @@ public class JobRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("name", "user4")
+                .addString("name", "userName")
+                .addLong("seq", 2L)
+                .addDate("date", new Date())
+                .addDouble("age", 16.5)
                 .toJobParameters();
 
         jobLauncher.run(job, jobParameters);

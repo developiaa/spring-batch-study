@@ -27,6 +27,7 @@ public class JobParameterConfiguration {
         return jobBuilderFactory.get("Job")
                 .start(step3())
                 .next(step4())
+                .next(step5())
                 .build();
     }
 
@@ -65,6 +66,13 @@ public class JobParameterConfiguration {
                         return RepeatStatus.FINISHED;
                     }
                 })
+                .build();
+    }
+
+    @Bean
+    public Step step5() {
+        return stepBuilderFactory.get("step5")
+                .tasklet(new CustomTasklet())
                 .build();
     }
 }

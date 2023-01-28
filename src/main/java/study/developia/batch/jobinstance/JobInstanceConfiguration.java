@@ -30,12 +30,9 @@ public class JobInstanceConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step1 was executed");
-                        return RepeatStatus.FINISHED;
-                    }
+                .tasklet((contribution, chunkContext) -> {
+                    System.out.println("step1 was executed");
+                    return RepeatStatus.FINISHED;
                 })
                 .build();
     }

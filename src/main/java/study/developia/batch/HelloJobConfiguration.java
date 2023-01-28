@@ -30,14 +30,11 @@ public class HelloJobConfiguration {
     @Bean
     public Step helloStep1() {
         return stepBuilderFactory.get("helloStep1")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("==========================");
-                        System.out.println(" >> Hello Spring Batch !! ");
-                        System.out.println("==========================");
-                        return RepeatStatus.FINISHED; // 기본적으로는 무한반복이므로 finish로 종료시킴
-                    }
+                .tasklet((contribution, chunkContext) -> {
+                    System.out.println("==========================");
+                    System.out.println(" >> Hello Spring Batch !! ");
+                    System.out.println("==========================");
+                    return RepeatStatus.FINISHED; // 기본적으로는 무한반복이므로 finish로 종료시킴
                 })
                 .build();
     }

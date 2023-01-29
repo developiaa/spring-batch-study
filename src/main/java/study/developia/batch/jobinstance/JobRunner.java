@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class JobRunner implements ApplicationRunner {
+    // 애플리케이션이 처음 실행 되고 빈 주입후 실행됨
 
     private final JobLauncher jobLauncher;
     private final Job job;
@@ -19,7 +20,7 @@ public class JobRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("name", "user4")
+                .addString("name", "user1")
                 .toJobParameters();
 
         jobLauncher.run(job, jobParameters);

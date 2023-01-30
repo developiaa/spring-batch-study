@@ -10,7 +10,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Component
+//@Component
 public class JobRunner implements ApplicationRunner {
     // 애플리케이션이 처음 실행 되고 빈 주입후 실행됨
 

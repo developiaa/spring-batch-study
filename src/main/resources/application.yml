@@ -32,3 +32,4 @@ spring:
       initialize-schema: "never" # 운영 환경에서는 수동(never)으로 사용할 것
     job:
       enabled: false
+      names: ${job.name:NONE} # --job.name=batchJob1

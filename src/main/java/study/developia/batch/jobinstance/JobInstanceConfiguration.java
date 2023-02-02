@@ -7,6 +7,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -31,7 +32,8 @@ public class JobInstanceConfiguration {
                 .next(step2())
                 .next(step3())
                 // 1. job이 생성되기 전에 한번 체크, 2. job이 수행될 때 체크
-                .validator(new CustomJobParameterValidator())
+//                .validator(new CustomJobParameterValidator())
+                .validator(new DefaultJobParametersValidator(new String[]{"name","date"}, new String[]{"count"}))
 //                .listener(jobExecutionListener)
                 .build();
     }

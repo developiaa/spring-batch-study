@@ -24,58 +24,61 @@ public class JobInstanceConfiguration {
     private final StepBuilderFactory stepBuilderFactory;
     private final JobExecutionListener jobExecutionListener;
 
-//    @Bean
-//    public Job job() {
-//        return jobBuilderFactory.get("job")
-//                .start(step1())
-//                .next(step2())
-//                .listener(jobExecutionListener)
-//                .build();
-//    }
-//
-//    @Bean
-//    public Step step1() {
-//        return stepBuilderFactory.get("step1")
-//                .tasklet((contribution, chunkContext) -> {
-//                    System.out.println("step1 was executed");
-//                    return RepeatStatus.FINISHED;
-//                })
-//                .build();
-//    }
-//
-//    @Bean
-//    public Step step2() {
-//        return stepBuilderFactory.get("step2")
-//                .tasklet(new Tasklet() {
-//                    @Override
-//                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-//                        System.out.println("step2 was executed");
-//                        return RepeatStatus.FINISHED;
-//                    }
-//                })
-//                .build();
-//    }
-
     @Bean
-    public Job job2() {
+    public Job job() {
         return jobBuilderFactory.get("job")
-                .start(flow())
-                .next(step5())
-                .end()
+                .start(step1())
+                .next(step2())
+                .next(step3())
+                // 1. job이 생성되기 전에 한번 체크, 2. job이 수행될 때 체크
+                .validator(new CustomJobParameterValidator())
+//                .listener(jobExecutionListener)
                 .build();
     }
 
-
     @Bean
-    public Flow flow() {
-        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
-        flowBuilder.start(step3())
-                .next(step4())
-                .end();
-
-        return flowBuilder.build();
+    public Step step1() {
+        return stepBuilderFactory.get("step1")
+                .tasklet((contribution, chunkContext) -> {
+                    System.out.println("step1 was executed");
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
     }
 
+    @Bean
+    public Step step2() {
+        return stepBuilderFactory.get("step2")
+                .tasklet(new Tasklet() {
+                    @Override
+                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+                        System.out.println("step2 was executed");
+                        return RepeatStatus.FINISHED;
+                    }
+                })
+                .build();
+    }
+
+//    @Bean
+//    public Job job2() {
+//        return jobBuilderFactory.get("job")
+//                .start(flow())
+//                .next(step5())
+//                .end()
+//                .build();
+//    }
+//
+//
+//    @Bean
+//    public Flow flow() {
+//        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
+//        flowBuilder.start(step3())
+//                .next(step4())
+//                .end();
+//
+//        return flowBuilder.build();
+//    }
+//
     @Bean
     public Step step3() {
         return stepBuilderFactory.get("step3")
@@ -88,30 +91,30 @@ public class JobInstanceConfiguration {
                 })
                 .build();
     }
-
-    @Bean
-    public Step step4() {
-        return stepBuilderFactory.get("step4")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step4 was executed");
-                        return RepeatStatus.FINISHED;
-                    }
-                })
-                .build();
-    }
-
-    @Bean
-    public Step step5() {
-        return stepBuilderFactory.get("step5")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step4 was executed");
-                        return RepeatStatus.FINISHED;
-                    }
-                })
-                .build();
-    }
+//
+//    @Bean
+//    public Step step4() {
+//        return stepBuilderFactory.get("step4")
+//                .tasklet(new Tasklet() {
+//                    @Override
+//                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+//                        System.out.println("step4 was executed");
+//                        return RepeatStatus.FINISHED;
+//                    }
+//                })
+//                .build();
+//    }
+//
+//    @Bean
+//    public Step step5() {
+//        return stepBuilderFactory.get("step5")
+//                .tasklet(new Tasklet() {
+//                    @Override
+//                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+//                        System.out.println("step4 was executed");
+//                        return RepeatStatus.FINISHED;
+//                    }
+//                })
+//                .build();
+//    }
 }

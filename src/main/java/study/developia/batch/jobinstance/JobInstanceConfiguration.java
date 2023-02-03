@@ -35,6 +35,7 @@ public class JobInstanceConfiguration {
 //                .validator(new CustomJobParameterValidator())
                 .validator(new DefaultJobParametersValidator(new String[]{"name","date"}, new String[]{"count"}))
 //                .listener(jobExecutionListener)
+                .preventRestart() // 재시작 방지, 기본값 true
                 .build();
     }
 

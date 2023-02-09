@@ -37,6 +37,7 @@ public class TaskStepConfiguration {
                 .tasklet((contribution, chunkContext) -> {
                     return RepeatStatus.FINISHED;
                 })
+                .allowStartIfComplete(true) // 성공 유무와 상관 없이 다시 실행함
                 .build();
     }
 
@@ -64,6 +65,7 @@ public class TaskStepConfiguration {
     public Step stepTest() {
         return stepBuilderFactory.get("stepTest")
                 .tasklet(new CustomTasklet())
+                .startLimit(3) // 최대 3번 실행, 4번째부터는 step exectuion은 생성되지 않음
                 .build();
     }
 

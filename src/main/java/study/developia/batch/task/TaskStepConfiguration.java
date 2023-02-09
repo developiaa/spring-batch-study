@@ -26,6 +26,7 @@ public class TaskStepConfiguration {
     public Job chunkStepJob() {
         return jobBuilderFactory.get("chunkStepJob")
                 .start(chunkStep())
+                .next(stepTest())
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
@@ -56,6 +57,13 @@ public class TaskStepConfiguration {
                         items.forEach(item -> System.out.println(item));
                     }
                 })
+                .build();
+    }
+
+    @Bean
+    public Step stepTest() {
+        return stepBuilderFactory.get("stepTest")
+                .tasklet(new CustomTasklet())
                 .build();
     }
 

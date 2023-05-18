@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import study.developia.batch.customexitstatus.PassCheckingListener;
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class JobExecutionDeciderConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

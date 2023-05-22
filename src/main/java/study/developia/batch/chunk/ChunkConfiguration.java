@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class ChunkConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

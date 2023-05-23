@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class ItemReaderProcessorWriterConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

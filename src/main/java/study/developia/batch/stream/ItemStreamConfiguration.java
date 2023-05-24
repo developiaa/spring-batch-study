@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class ItemStreamConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

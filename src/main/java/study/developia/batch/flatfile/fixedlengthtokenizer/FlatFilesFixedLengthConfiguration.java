@@ -1,42 +1,39 @@
-package study.developia.batch.flatfile;
+package study.developia.batch.flatfile.fixedlengthtokenizer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.file.transform.Range;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import study.developia.batch.stream.CustomItemStreamReader;
-import study.developia.batch.stream.CustomItemStreamWriter;
+import org.springframework.core.io.FileSystemResource;
+import study.developia.batch.flatfile.Customer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-//@Configuration
-public class FlatFilesConfiguration {
+@Configuration
+public class FlatFilesFixedLengthConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job flatFileJob() {
-        return jobBuilderFactory.get("flatFileJob")
-                .start(flatFileStep1())
-                .next(flatFileStep2()).build();
+    public Job flatFileFixedLengthJob() {
+        return jobBuilderFactory.get("flatFileFixedLengthJob")
+                .start(flatFileFixedLengthStep1())
+                .next(flatFileFixedLengthStep2()).build();
     }
 
     @Bean
-    public Step flatFileStep1() {
-        return stepBuilderFactory.get("flatFileStep1")
+    public Step flatFileFixedLengthStep1() {
+        return stepBuilderFactory.get("flatFileFixedLengthStep1")
                 .<Customer, String>chunk(5)
                 .reader(itemReader())
                 .writer(new ItemWriter<String>() {
@@ -50,33 +47,24 @@ public class FlatFilesConfiguration {
 
 
     @Bean
-    public ItemReader<Customer> itemReader() {
-//        FlatFileItemReader<Customer> itemReader = new FlatFileItemReader<>();
-//        itemReader.setResource(new ClassPathResource("/customer.csv"));
-//
-//        DefaultLineMapper<Customer> lineMapper = new DefaultLineMapper<>();
-//        lineMapper.setLineTokenize(new DelimitedLineTokenizer());
-//        lineMapper.setFieldSetMapper(new CustomerFieldSetMapper());
-//
-//        itemReader.setLineMapper(lineMapper);
-//        // 첫번째 헤더이므로 라인은 건너뒴
-//        itemReader.setLinesToSkip(1);
-//        return itemReader;
-
+    public FlatFileItemReader<Customer> itemReader() {
         return new FlatFileItemReaderBuilder<Customer>()
                 .name("flatFile")
-                .resource(new ClassPathResource("/customer.csv"))
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<>()) // CustomerFieldSetMapper와 동일한 기능
+                .resource(new FileSystemResource("/Users/developia/dev/study/spring-batch-study/src/main/resources/customer.txt"))
+                .fieldSetMapper(new BeanWrapperFieldSetMapper<>())
                 .targetType(Customer.class)
                 .linesToSkip(1)
-                .delimited().delimiter(",")
-                .names("name", "age", "year")
+                .fixedLength()
+                .addColumns(new Range(1, 5))
+                .addColumns(new Range(6, 9))
+                .addColumns(new Range(10, 11))
+                .names("name", "year", "age")
                 .build();
     }
 
     @Bean
-    public Step flatFileStep2() {
-        return stepBuilderFactory.get("flatFileStep2")
+    public Step flatFileFixedLengthStep2() {
+        return stepBuilderFactory.get("flatFileFixedLengthStep2")
                 .tasklet(((contribution, chunkContext) -> RepeatStatus.FINISHED))
                 .build();
     }

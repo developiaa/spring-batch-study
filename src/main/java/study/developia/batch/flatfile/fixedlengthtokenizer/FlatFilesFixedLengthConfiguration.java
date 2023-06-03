@@ -55,6 +55,7 @@ public class FlatFilesFixedLengthConfiguration {
                 .targetType(Customer.class)
                 .linesToSkip(1)
                 .fixedLength()
+                .strict(false) // 예외가 발생하더라도 처리를 안하는 경우
                 .addColumns(new Range(1, 5))
                 .addColumns(new Range(6, 9))
                 .addColumns(new Range(10, 11))

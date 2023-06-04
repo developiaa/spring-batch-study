@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<customers>
+    <customer year="1">
+        <year>1980</year>
+        <name>hong gil dong</name>
+        <age>40</age>
+    </customer>
+    <customer>
+        <year>1981</year>
+        <name>hong gil dong2</name>
+        <age>42</age>
+    </customer>
+    <customer>
+        <year>1982</year>
+        <name>hong gil dong3</name>
+        <age>43</age>
+    </customer>
+</customers>

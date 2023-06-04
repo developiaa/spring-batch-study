@@ -12,14 +12,13 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.transform.Range;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import study.developia.batch.flatfile.Customer;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class FlatFilesFixedLengthConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

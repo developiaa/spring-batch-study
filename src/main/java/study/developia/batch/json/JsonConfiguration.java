@@ -16,7 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import study.developia.batch.flatfile.Customer;
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class JsonConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

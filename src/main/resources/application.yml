@@ -33,3 +33,11 @@ spring:
     job:
       enabled: true
       names: ${job.name:NONE} # --job.name=batchJob1
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

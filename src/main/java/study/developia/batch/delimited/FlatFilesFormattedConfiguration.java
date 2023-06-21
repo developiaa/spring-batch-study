@@ -18,43 +18,43 @@ import org.springframework.core.io.FileSystemResource;
 import java.util.Arrays;
 import java.util.List;
 
-//@Configuration
+@Configuration
 @RequiredArgsConstructor
-public class FlatFilesDelimitedConfiguration {
+public class FlatFilesFormattedConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job flatFilesDelimitedJob() {
-        return jobBuilderFactory.get("flatFilesDelimitedJob")
+    public Job flatFilesFormattedJob() {
+        return jobBuilderFactory.get("flatFilesFormattedJob")
                 .incrementer(new RunIdIncrementer())
-                .start(flatFilesDelimitedStep())
+                .start(flatFilesFormattedStep())
                 .build();
     }
 
     @Bean
-    public Step flatFilesDelimitedStep() {
-        return stepBuilderFactory.get("flatFilesDelimitedStep")
+    public Step flatFilesFormattedStep() {
+        return stepBuilderFactory.get("flatFilesFormattedStep")
                 .<Customer, Customer>chunk(10)
-                .reader(flatFilesDelimitedReader())
-                .writer(flatFilesDelimitedWriter())
+                .reader(flatFilesFormattedReader())
+                .writer(flatFilesFormattedWriter())
                 .build();
     }
 
     @Bean
-    public ItemWriter<? super Customer> flatFilesDelimitedWriter() {
+    public ItemWriter<? super Customer> flatFilesFormattedWriter() {
         return new FlatFileItemWriterBuilder<>()
                 .name("flatFileWriter")
-                .resource(new FileSystemResource("/Users/developia/dev/study/spring-batch-study/src/main/resources/customer2.txt"))
+                .resource(new FileSystemResource("/Users/developia/dev/study/spring-batch-study/src/main/resources/customer3.txt"))
                 .append(true)
-                .delimited()
-                .delimiter("|")
+                .formatted()
+                .format("%-2d%-15s%-2d")
                 .names(new String[]{"id", "name", "age"})
                 .build();
     }
 
     @Bean
-    public ItemReader<? extends Customer> flatFilesDelimitedReader() {
+    public ItemReader<? extends Customer> flatFilesFormattedReader() {
         List<Customer> customers = Arrays.asList(
                 new Customer(1, "hong gil dong", 41),
                 new Customer(2, "hong gil dong", 42),

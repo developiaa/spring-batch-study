@@ -18,7 +18,7 @@ import org.springframework.core.io.FileSystemResource;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class FlatFilesFormattedConfiguration {
     private final JobBuilderFactory jobBuilderFactory;

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customer>
+    <customer>
+        <id>17</id>
+        <firstname>Aimee</firstname>
+        <lastname>Cox</lastname>
+        <birthdate>1976-10-15 12:56:50</birthdate>
+    </customer>
+    <customer>
+        <id>32</id>
+        <firstname>Ali</firstname>
+        <lastname>Browning</lastname>
+        <birthdate>1979-03-27 17:09:37</birthdate>
+    </customer>
+    <customer>
+        <id>44</id>
+        <firstname>Astra</firstname>
+        <lastname>Winters</lastname>
+        <birthdate>1952-03-13 01:13:07</birthdate>
+    </customer>
+    <customer>
+        <id>62</id>
+        <firstname>Alexa</firstname>
+        <lastname>Walters</lastname>
+        <birthdate>1977-12-06 16:41:17</birthdate>
+    </customer>
+    <customer>
+        <id>76</id>
+        <firstname>Ariana</firstname>
+        <lastname>Cochran</lastname>
+        <birthdate>1959-12-04 01:18:36</birthdate>
+    </customer>
+    <customer>
+        <id>94</id>
+        <firstname>ABrennan</firstname>
+        <lastname>Oneill</lastname>
+        <birthdate>1979-04-23 08:49:02</birthdate>
+    </customer>
+    <customer>
+        <id>95</id>
+        <firstname>ADacey</firstname>
+        <lastname>Howe</lastname>
+        <birthdate>1983-02-06 19:11:00</birthdate>
+    </customer>
+    <customer>
+        <id>96</id>
+        <firstname>AYoko</firstname>
+        <lastname>Pittman</lastname>
+        <birthdate>1982-09-12 02:18:52</birthdate>
+    </customer>
+    <customer>
+        <id>97</id>
+        <firstname>ACody</firstname>
+        <lastname>Conway</lastname>
+        <birthdate>1971-05-26 07:09:58</birthdate>
+    </customer>
+    <customer>
+        <id>98</id>
+        <firstname>AJordan</firstname>
+        <lastname>Knowles</lastname>
+        <birthdate>1981-12-30 02:20:01</birthdate>
+    </customer>
+    <customer>
+        <id>99</id>
+        <firstname>APearl</firstname>
+        <lastname>Boyer</lastname>
+        <birthdate>1957-10-19 14:26:49</birthdate>
+    </customer>
+</customer>

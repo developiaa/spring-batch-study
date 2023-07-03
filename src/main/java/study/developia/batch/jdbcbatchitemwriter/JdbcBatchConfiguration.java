@@ -1,4 +1,4 @@
-package study.developia.batch.stax;
+package study.developia.batch.jdbcbatchitemwriter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -9,45 +9,52 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.support.MySqlPagingQueryProvider;
-import org.springframework.batch.item.json.JacksonJsonObjectMarshaller;
-import org.springframework.batch.item.json.builder.JsonFileItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
 import study.developia.batch.jdbc.Customer;
+import study.developia.batch.stax.CustomerRowMapper;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
+@Configuration
 @RequiredArgsConstructor
-//@Configuration
-public class JsonFileItemWriterConfiguration {
+public class JdbcBatchConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
 
     @Bean
-    public Job jsonFileItemWriterJob() {
-        return jobBuilderFactory.get("jsonFileItemWriterJob")
+    public Job jdbcBatchItemWriterJob() {
+        return jobBuilderFactory.get("jdbcBatchItemWriterJob")
                 .incrementer(new RunIdIncrementer())
-                .start(jsonFileItemWriterStep())
+                .start(jdbcBatchItemWriterStep())
                 .build();
     }
 
     @Bean
-    public Step jsonFileItemWriterStep() {
-        return stepBuilderFactory.get("jsonFileItemWriterStep")
+    public Step jdbcBatchItemWriterStep() {
+        return stepBuilderFactory.get("jdbcBatchItemWriterStep")
                 .<Customer, Customer>chunk(3)
-                .reader(jsonFileItemReader())
-                .writer(jsonFileItemWriter())
+                .reader(jdbcBatchItemReader())
+                .writer(customItemWriter())
                 .build()
                 ;
     }
+    @Bean
+    public ItemWriter<? super Customer> customItemWriter() {
+        return new JdbcBatchItemWriterBuilder<Customer>()
+                .dataSource(dataSource)
+                .sql("insert into customer2 value (:id, :firstname, :lastname, :birthdate)")
+                .beanMapped()
+                .build();
+    }
 
     @Bean
-    public JdbcPagingItemReader<Customer> jsonFileItemReader() {
+    public JdbcPagingItemReader<Customer> jdbcBatchItemReader() {
 
         JdbcPagingItemReader<Customer> reader = new JdbcPagingItemReader<>();
 
@@ -73,15 +80,4 @@ public class JsonFileItemWriterConfiguration {
 
         return reader;
     }
-
-    @Bean
-    public ItemWriter<? super Customer> jsonFileItemWriter() {
-        return new JsonFileItemWriterBuilder<Customer>()
-                .name("jsonFileItemWriter")
-                .jsonObjectMarshaller(new JacksonJsonObjectMarshaller<>())
-                .resource(new FileSystemResource("/Users/developia/dev/study/spring-batch-study/src/main/resources/customer2.json"))
-                .build()
-                ;
-    }
-
 }

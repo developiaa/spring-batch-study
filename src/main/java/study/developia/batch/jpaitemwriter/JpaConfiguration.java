@@ -1,4 +1,4 @@
-package study.developia.batch.jdbcbatchitemwriter;
+package study.developia.batch.jpaitemwriter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -6,50 +6,59 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.database.support.MySqlPagingQueryProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import study.developia.batch.jdbc.Customer;
 import study.developia.batch.stax.CustomerRowMapper;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-//@Configuration
+@Configuration
 @RequiredArgsConstructor
-public class JdbcBatchConfiguration {
+public class JpaConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Bean
-    public Job jdbcBatchItemWriterJob() {
-        return jobBuilderFactory.get("jdbcBatchItemWriterJob")
+    public Job jpaItemWriterJob() {
+        return jobBuilderFactory.get("jpaItemWriterJob")
                 .incrementer(new RunIdIncrementer())
-                .start(jdbcBatchItemWriterStep())
+                .start(jpaItemWriterStep())
                 .build();
     }
 
     @Bean
-    public Step jdbcBatchItemWriterStep() {
-        return stepBuilderFactory.get("jdbcBatchItemWriterStep")
-                .<Customer, Customer>chunk(3)
+    public Step jpaItemWriterStep() {
+        return stepBuilderFactory.get("jpaItemWriterStep")
+                .<Customer, Customer2>chunk(3)
                 .reader(jdbcBatchItemReader())
-                .writer(customItemWriter())
+                .processor(customJpaItemProcessor())
+                .writer(customJpaItemWriter())
                 .build()
                 ;
     }
+
     @Bean
-    public ItemWriter<? super Customer> customItemWriter() {
-        return new JdbcBatchItemWriterBuilder<Customer>()
-                .dataSource(dataSource)
-                .sql("insert into customer2 value (:id, :firstname, :lastname, :birthdate)")
-                .beanMapped()
+    public ItemProcessor<? super Customer, ? extends Customer2> customJpaItemProcessor() {
+        return new CustomJpaItemProcessor();
+    }
+
+    @Bean
+    public ItemWriter<? super Customer2> customJpaItemWriter() {
+        return new JpaItemWriterBuilder<Customer2>()
+                .usePersist(true)
+                .entityManagerFactory(entityManagerFactory)
                 .build();
     }
 

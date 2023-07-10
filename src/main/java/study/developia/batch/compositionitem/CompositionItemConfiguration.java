@@ -1,4 +1,4 @@
-package study.developia.batch.itemwriteradapter;
+package study.developia.batch.compositionitem;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -7,27 +7,30 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.*;
-import org.springframework.batch.item.adapter.ItemWriterAdapter;
+import org.springframework.batch.item.support.builder.CompositeItemProcessorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-//@Configuration
+import java.util.ArrayList;
+import java.util.List;
+
+@Configuration
 @RequiredArgsConstructor
-public class ItemWriterAdapterConfiguration {
+public class CompositionItemConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job itemWriterAdapterJob() {
-        return jobBuilderFactory.get("itemWriterAdapterJob")
+    public Job compositionItemJob() {
+        return jobBuilderFactory.get("compositionItemJob")
                 .incrementer(new RunIdIncrementer())
-                .start(itemWriterAdapterStep())
+                .start(compositionItemStep())
                 .build();
     }
 
     @Bean
-    public Step itemWriterAdapterStep() {
-        return stepBuilderFactory.get("itemWriterAdapterStep")
+    public Step compositionItemStep() {
+        return stepBuilderFactory.get("compositionItemStep")
                 .<String, String>chunk(10)
                 .reader(new ItemReader<String>() {
                     int i = 0;
@@ -38,22 +41,21 @@ public class ItemWriterAdapterConfiguration {
                         return i > 10 ? null : "item" + i;
                     }
                 })
-                .writer(itemWriterAdapter())
+                .processor(customCompositionItemProcessor())
+                .writer(items -> System.out.println(items))
                 .build()
                 ;
     }
 
     @Bean
-    public ItemWriter<? super String> itemWriterAdapter() {
-        ItemWriterAdapter<String> writer = new ItemWriterAdapter<>();
-        writer.setTargetObject(customService());
-        writer.setTargetMethod("customWrite");
+    public ItemProcessor<? super String, String> customCompositionItemProcessor() {
+        List itemProcessor = new ArrayList();
+        itemProcessor.add(new CustomItemProcessor());
+        itemProcessor.add(new CustomItemProcessor2());
 
-        return writer;
+        return new CompositeItemProcessorBuilder<>()
+                .delegates(itemProcessor)
+                .build();
     }
 
-    @Bean
-    public CustomWriterService customService() {
-        return new CustomWriterService();
-    }
 }

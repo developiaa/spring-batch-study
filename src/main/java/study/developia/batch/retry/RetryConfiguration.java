@@ -15,6 +15,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.RetryPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
 import study.developia.batch.skip.SkipItemProcessor;
 import study.developia.batch.skip.SkipItemWriter;
 import study.developia.batch.skip.SkippableException;
@@ -47,8 +49,10 @@ public class RetryConfiguration {
                 .processor(processor())
                 .writer(items -> items.forEach(item -> System.out.println(item)))
                 .faultTolerant()
-                .retry(RetryableException.class)
-                .retryLimit(2)
+                .skip(RetryableException.class) // skip을 해주어야 retry 로직에서 실패한 부분을 다시 재시작 안함
+                .skipLimit(2)
+//                .retry(RetryableException.class)
+//                .retryLimit(2)
                 .build();
     }
 
@@ -56,9 +60,6 @@ public class RetryConfiguration {
     public ItemProcessor<? super String, String> processor() {
         return new RetryItemProcessor();
     }
-
-
-
 
     @Bean
     public ListItemReader<String> reader() {
@@ -68,6 +69,14 @@ public class RetryConfiguration {
         }
 
         return new ListItemReader<>(items);
+    }
+
+    @Bean
+    public RetryPolicy retryPolicy() {
+        Map<Class<? extends Throwable>, Boolean> exceptionClass = new HashMap<>();
+        exceptionClass.put(RetryableException.class, Boolean.TRUE);
+
+        return new SimpleRetryPolicy(2, exceptionClass);
     }
 
 }

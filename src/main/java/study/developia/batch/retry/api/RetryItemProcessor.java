@@ -1,6 +1,7 @@
-package study.developia.batch.retry;
+package study.developia.batch.retry.api;
 
 import org.springframework.batch.item.ItemProcessor;
+import study.developia.batch.retry.RetryableException;
 
 public class RetryItemProcessor implements ItemProcessor<String, String> {
     private int cnt = 0;

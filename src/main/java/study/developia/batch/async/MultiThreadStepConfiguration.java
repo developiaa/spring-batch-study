@@ -7,7 +7,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.integration.async.AsyncItemProcessor;
 import org.springframework.batch.integration.async.AsyncItemWriter;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -18,6 +17,8 @@ import org.springframework.batch.item.database.support.MySqlPagingQueryProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -25,34 +26,47 @@ import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-//@Configuration
-public class AsyncConfiguration {
+@Configuration
+public class MultiThreadStepConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
 
     @Bean
-    public Job asyncJob() throws InterruptedException {
-        return jobBuilderFactory.get("asyncJob")
+    public Job multiThreadJob() throws InterruptedException {
+        return jobBuilderFactory.get("multiThreadJob")
                 .incrementer(new RunIdIncrementer())
-//                .start(syncStep())
-                .start(asyncStep())
+                .start(multiThreadStep())
                 .listener(new StopWatchJobListener())
                 .build();
     }
 
     @Bean
-    public Step syncStep() throws InterruptedException {
-        return stepBuilderFactory.get("syncStep")
+    public Step multiThreadStep() throws InterruptedException {
+        return stepBuilderFactory.get("multiThreadStep")
                 .<Customer, Customer>chunk(100)
-                .reader(pagingItemReaderAtAsync())
-                .processor(customItemProcessorAtAsync())
-                .writer(customItemWriterAtAsync())
+                .reader(pagingItemReaderAtMultiThread())
+                .listener(new CustomItemReadListener())
+                .processor((ItemProcessor<Customer, Customer>) item->item)
+                .listener(new CustomItemProcessorListener())
+                .writer(customItemWriterAtMultiThread())
+                .listener(new CustomItemWriterListener())
+                .taskExecutor(taskExecutor()) // 작성하지 않으면 동기로 작동
                 .build();
     }
 
     @Bean
-    public ItemProcessor<Customer, Customer> customItemProcessorAtAsync() throws InterruptedException {
+    public TaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(4);
+        taskExecutor.setMaxPoolSize(8);
+        taskExecutor.setThreadNamePrefix("async-thread");
+
+        return taskExecutor;
+    }
+
+    @Bean
+    public ItemProcessor<Customer, Customer> customItemProcessorAtMultiThread() throws InterruptedException {
         return new ItemProcessor<Customer, Customer>() {
             @Override
             public Customer process(Customer item) throws Exception {
@@ -63,35 +77,20 @@ public class AsyncConfiguration {
         };
     }
 
+
+
     @Bean
-    public Step asyncStep() throws InterruptedException {
-        return stepBuilderFactory.get("asyncStep")
-                .<Customer, Customer>chunk(100)
-                .reader(pagingItemReaderAtAsync())
-                .processor(asyncItemProcessor())
-                .writer(asyncItemWriter())
-                .build();
+    public JdbcBatchItemWriter customItemWriterAtAsync() {
+        JdbcBatchItemWriter<Object> itemWriter = new JdbcBatchItemWriter<>();
+        itemWriter.setDataSource(this.dataSource);
+        itemWriter.setSql("insert into customer2 value (:id, :firstname, :lastname, :birthdate)");
+        itemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+        itemWriter.afterPropertiesSet();
+        return itemWriter;
     }
 
     @Bean
-    public AsyncItemWriter asyncItemWriter() {
-        AsyncItemWriter<Customer> asyncItemWriter = new AsyncItemWriter<>();
-        asyncItemWriter.setDelegate(customItemWriterAtAsync());
-
-        return asyncItemWriter;
-    }
-
-    @Bean
-    public AsyncItemProcessor asyncItemProcessor() throws InterruptedException {
-        AsyncItemProcessor<Customer, Customer> asyncItemProcessor = new AsyncItemProcessor<>();
-        asyncItemProcessor.setDelegate(customItemProcessorAtAsync());
-        asyncItemProcessor.setTaskExecutor(new SimpleAsyncTaskExecutor());
-//        asyncItemProcessor.afterPropertiesSet(); // bean으로 만들면 필요없음
-        return asyncItemProcessor;
-    }
-
-    @Bean
-    public JdbcPagingItemReader<Customer> pagingItemReaderAtAsync() {
+    public JdbcPagingItemReader<Customer> pagingItemReaderAtMultiThread() {
         JdbcPagingItemReader<Customer> reader = new JdbcPagingItemReader<>();
 
         reader.setDataSource(this.dataSource);
@@ -112,7 +111,7 @@ public class AsyncConfiguration {
     }
 
     @Bean
-    public JdbcBatchItemWriter customItemWriterAtAsync() {
+    public JdbcBatchItemWriter customItemWriterAtMultiThread() {
         JdbcBatchItemWriter<Object> itemWriter = new JdbcBatchItemWriter<>();
         itemWriter.setDataSource(this.dataSource);
         itemWriter.setSql("insert into customer2 value (:id, :firstname, :lastname, :birthdate)");

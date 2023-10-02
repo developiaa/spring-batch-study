@@ -19,7 +19,7 @@ import study.developia.batch.async.StopWatchJobListener;
 
 @Slf4j
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class ParallelStepConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

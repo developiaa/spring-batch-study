@@ -42,7 +42,7 @@ spring:
       names: ${job.name:NONE} # --job.name=batchJob1
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
     properties:

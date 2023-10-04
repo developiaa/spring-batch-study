@@ -1,4 +1,4 @@
-package study.developia.batch.partitioning;
+package study.developia.batch.synchronizeditemstream;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-//@Entity
+@Entity
 public class Customer {
     @Id
     @GeneratedValue

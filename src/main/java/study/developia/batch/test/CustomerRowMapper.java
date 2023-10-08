@@ -1,5 +1,4 @@
-package study.developia.batch.async;
-
+package study.developia.batch.test;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -11,8 +10,8 @@ public class CustomerRowMapper implements RowMapper<Customer> {
     @Override
     public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new Customer(rs.getLong("id"),
-                rs.getString("firstname"),
-                rs.getString("lastname"),
+                rs.getString("firstName"),
+                rs.getString("lastName"),
                 rs.getString("birthdate")
         );
     }

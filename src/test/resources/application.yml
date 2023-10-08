@@ -1,0 +1,50 @@
+
+spring:
+  profiles:
+    active: mysql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      username: sa
+      password:
+      driver-class-name: org.h2.Drvier
+  batch:
+    jdbc:
+      initialize-schema: embedded
+---
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+      url: jdbc:mysql://localhost:3306/spring_batch
+      username: root
+      password: password
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  batch:
+    jdbc:
+      initialize-schema: "never" # 운영 환경에서는 수동(never)으로 사용할 것
+    job:
+      enabled: true
+      names: ${job.name:NONE} # --job.name=batchJob1
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

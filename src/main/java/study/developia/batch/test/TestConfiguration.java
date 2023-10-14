@@ -20,7 +20,7 @@ import java.util.Map;
 
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class TestConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;

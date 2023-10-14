@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+//@Entity
 public class Customer2 {
     @Id
     @GeneratedValue

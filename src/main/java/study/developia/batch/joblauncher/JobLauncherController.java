@@ -20,7 +20,7 @@ import java.util.Date;
 
 
 @RequiredArgsConstructor
-@RestController
+//@RestController
 public class JobLauncherController {
     private final Job job;
     private final JobLauncher jobLauncher;

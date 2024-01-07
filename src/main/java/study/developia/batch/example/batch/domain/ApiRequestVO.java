@@ -8,4 +8,5 @@ import lombok.Data;
 public class ApiRequestVO {
     private long id;
     private ProductVO productVO;
+    private ApiResponseVO apiResponseVO;
 }
